@@ -65,7 +65,7 @@ def load_vectorizer(vectorizer_path: str) -> TfidfVectorizer:
     except Exception as e:
         logger.error('Error loading vectorizer from %s: %s', vectorizer_path, e)
         raise
-
+  
 
 def load_params(params_path: str) -> dict:
     """Load parameters from a YAML file."""
