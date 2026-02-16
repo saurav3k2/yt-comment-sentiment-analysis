@@ -129,7 +129,7 @@ def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
 def main():
     mlflow.set_tracking_uri("http://3.88.87.182:5000")
 
-    mlflow.set_experiment('DVC-pipeline-runs')
+    mlflow.set_experiment('dvc-pipeline-run')
     
     with mlflow.start_run() as run:
         try:
@@ -144,7 +144,15 @@ def main():
             # Load model and vectorizer
             model = load_model(os.path.join(root_dir, 'lgbm_model.pkl'))
             vectorizer = load_vectorizer(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
-
+            
+            #log model parameters 
+            if hasattr(model, 'get_params'):
+                for param_name, param_value in model.get_params().items():
+                    mlflow.log_param(param_name, param_value)
+            # log model and vectorizer 
+            mlflow.sklearn.log_model(model, "lgbm_model")
+            mlflow.log_artifact(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
+            
             # Load test data for signature inference
             test_data = load_data(os.path.join(root_dir, 'data/interim/test_processed.csv'))
 
