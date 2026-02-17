@@ -50,8 +50,8 @@ stages:
       size: 3814580
     - path: src/model/model_building.py
       hash: md5
-      md5: 6ca46ace44e4eb5becf5d8a94fd913eb
-      size: 5685
+      md5: cf95472e605fec517542d99242fe4cea
+      size: 5686
     params:
       params.yaml:
         model_building.learning_rate: 0.08
@@ -68,7 +68,7 @@ stages:
       size: 4113222
     - path: tfidf_vectorizer.pkl
       hash: md5
-      md5: b65e584e07337b54076727487850f1b8
+      md5: 81e6f79e98e5824b9a54db7a6933f866
       size: 384399
   model_evaluation:
     cmd: python src/model/model_evaluation.py
@@ -87,9 +87,9 @@ stages:
       size: 4113222
     - path: src/model/model_evaluation.py
       hash: md5
-      md5: 551ed9abb45aa13b703d82d26807a0c6
-      size: 7712
+      md5: c4235deaaafe112b9c50fe9f656fa684
+      size: 7934
     - path: tfidf_vectorizer.pkl
       hash: md5
-      md5: b65e584e07337b54076727487850f1b8
+      md5: 81e6f79e98e5824b9a54db7a6933f866
       size: 384399
