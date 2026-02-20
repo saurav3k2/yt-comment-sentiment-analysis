@@ -65,7 +65,7 @@ def load_vectorizer(vectorizer_path: str) -> TfidfVectorizer:
     except Exception as e:
         logger.error('Error loading vectorizer from %s: %s', vectorizer_path, e)
         raise
-  
+
 
 def load_params(params_path: str) -> dict:
     """Load parameters from a YAML file."""
@@ -129,7 +129,7 @@ def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
 def main():
     mlflow.set_tracking_uri("http://3.88.87.182:5000")
 
-    mlflow.set_experiment('dvc-pipeline-run')
+    mlflow.set_experiment('Dvc-pipeline-runs')
     
     with mlflow.start_run() as run:
         try:
@@ -141,17 +141,20 @@ def main():
             for key, value in params.items():
                 mlflow.log_param(key, value)
             
+
             # Load model and vectorizer
             model = load_model(os.path.join(root_dir, 'lgbm_model.pkl'))
             vectorizer = load_vectorizer(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
             
-            #log model parameters 
-            if hasattr(model, 'get_params'):
-                for param_name, param_value in model.get_params().items():
+            # log model parameters
+            if hasattr(model,'get_params'):
+                for param_name , param_value in model.get_params().items():
                     mlflow.log_param(param_name, param_value)
-            # log model and vectorizer 
+            
+            # log model and vectorizer
             mlflow.sklearn.log_model(model, "lgbm_model")
-            mlflow.log_artifact(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
+            mlflow.log_artifact(os.path.join(root_dir,'tfidf_vectorizer.pkl'))
+            
             
             # Load test data for signature inference
             test_data = load_data(os.path.join(root_dir, 'data/interim/test_processed.csv'))
@@ -159,52 +162,27 @@ def main():
             # Prepare test data
             X_test_tfidf = vectorizer.transform(test_data['clean_comment'].values)
             y_test = test_data['category'].values
-
-            # Create a DataFrame for signature inference (using first few rows as an example)
-            input_example = pd.DataFrame(X_test_tfidf.toarray()[:5], columns=vectorizer.get_feature_names_out())  # <--- Added for signature
-
-            # Infer the signature
-            signature = infer_signature(input_example, model.predict(X_test_tfidf[:5]))  # <--- Added for signature
-
-            # Log model with signature
-            mlflow.sklearn.log_model(
-                model,
-                "lgbm_model",
-                signature=signature,  # <--- Added for signature
-                input_example=input_example  # <--- Added input example
-            )
-            #log model parameters 
-            mlflow.sklearn.log_model(model , "lgbm_model")
             
-            artifact_path = mlflow.get_artifact_uri() 
-            model_path = f"{artifact_path}/lgbm_model"
-
-            # Save model info
-            model_path = "lgbm_model"
-            save_model_info(run.info.run_id, model_path, 'experiment_info.json')
-
-            # Log the vectorizer as an artifact
-            mlflow.log_artifact(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
-
             # Evaluate model and get metrics
-            report, cm = evaluate_model(model, X_test_tfidf, y_test)
-
-            # Log classification report metrics for the test data
-            for label, metrics in report.items():
+            report , cm = evaluate_model(model , X_test_tfidf, y_test)
+            
+            
+            # log classification report metrics for the test data
+            for label , metrics in report.items():
                 if isinstance(metrics, dict):
                     mlflow.log_metrics({
                         f"test_{label}_precision": metrics['precision'],
                         f"test_{label}_recall": metrics['recall'],
                         f"test_{label}_f1-score": metrics['f1-score']
                     })
-
-            # Log confusion matrix
+            # log confusion
             log_confusion_matrix(cm, "Test Data")
-
-            # Add important tags
-            mlflow.set_tag("model_type", "LightGBM")
-            mlflow.set_tag("task", "Sentiment Analysis")
-            mlflow.set_tag("dataset", "YouTube Comments")
+            
+            # add important tags
+            mlflow.set_tag("model_type","LightGBM")
+            mlflow.set_tag("model_type","LightGBM")
+            mlflow.set_tag("dataset", "Youtube Comment")
+    
 
         except Exception as e:
             logger.error(f"Failed to complete model evaluation: {e}")
