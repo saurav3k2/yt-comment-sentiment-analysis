@@ -1,7 +1,8 @@
 import mlflow
 import random
 
-mlflow.set_tracking_uri("http://3.88.87.182:5000")
+# Step 2: set up the Mlflow tracking server
+mlflow.set_tracking_uri("http://ec2-100-30-183-132.compute-1.amazonaws.com:5000/")
 
 # 🔥 Set or create a new experiment
 mlflow.set_experiment("Yt-comment-sentiment")

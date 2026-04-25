@@ -91,6 +91,3 @@ target/
 /tfidf_vectorizer.pkl
 /experiment_info.json
 
-
-/scripts
-flask_app
