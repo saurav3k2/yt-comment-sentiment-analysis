@@ -112,6 +112,7 @@ def log_confusion_matrix(cm, dataset_name):
 def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
     """Save the model run ID and path to a JSON file."""
     try:
+        os.makedirs(os.path.dirname(file_path) or '.', exist_ok=True)
         # Create a dictionary with the info you want to save
         model_info = {
             'run_id': run_id,
@@ -127,14 +128,15 @@ def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
 
 
 def main():
-    mlflow.set_tracking_uri("http://3.88.87.182:5000")
+    mlflow.set_tracking_uri("http://ec2-100-30-183-132.compute-1.amazonaws.com:5000/")
 
     mlflow.set_experiment('Dvc-Pipeline-run')
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+    experiment_info_path = os.path.join(root_dir, 'experiment_info.json')
     
     with mlflow.start_run() as run:
         try:
             # Load parameters from YAML file
-            root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
             params = load_params(os.path.join(root_dir, 'params.yaml'))
 
             # Log parameters
@@ -168,7 +170,7 @@ def main():
 
             # Save model info
             model_path = "lgbm_model"
-            save_model_info(run.info.run_id, model_path, 'experiment_info.json')
+            save_model_info(run.info.run_id, model_path, experiment_info_path)
 
             # Log the vectorizer as an artifact
             mlflow.log_artifact(os.path.join(root_dir, 'tfidf_vectorizer.pkl'))
@@ -195,7 +197,7 @@ def main():
 
         except Exception as e:
             logger.error(f"Failed to complete model evaluation: {e}")
-            print(f"Error: {e}")
+            raise
 
 if __name__ == '__main__':
     main()

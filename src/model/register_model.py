@@ -6,8 +6,7 @@ import logging
 import os
 
 # Set up MLflow tracking URI
-mlflow.set_tracking_uri("http://3.88.87.182:5000")
-
+mlflow.set_tracking_uri("http://ec2-100-30-183-132.compute-1.amazonaws.com:5000/")
 
 # logging configuration
 logger = logging.getLogger('model_registration')
@@ -70,7 +69,7 @@ def main():
         register_model(model_name, model_info)
     except Exception as e:
         logger.error('Failed to complete the model registration process: %s', e)
-        print(f"Error: {e}")
+        raise
 
 if __name__ == '__main__':
     main()

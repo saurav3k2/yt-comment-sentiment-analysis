@@ -1,8 +1,6 @@
-# src/model/model_building.py
-
-import numpy as np
 import pandas as pd
 import seaborn as sns 
+import numpy as np
 import os
 import pickle
 import yaml
