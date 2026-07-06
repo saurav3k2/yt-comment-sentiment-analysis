@@ -1,6 +1,3 @@
-
-A small chrome plugin to detect youtube comment sentiments
-
 Project Organization
 <div align="center">
 
